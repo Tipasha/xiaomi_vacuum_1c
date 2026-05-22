@@ -1,0 +1,21 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Xiaomi Mi Robot Vacuum-Mop 1C",
+        "description": "Enter the IP address and token of your Xiaomi Mi Robot Vacuum-Mop 1C (Dreame MC1808).",
+        "data": {
+          "host": "IP Address",
+          "token": "Token (32 hex characters)"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the vacuum. Check the IP and token.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This vacuum is already configured."
+    }
+  }
+}

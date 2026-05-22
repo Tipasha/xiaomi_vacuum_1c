@@ -1,0 +1,68 @@
+remote_control_move:
+  name: Remote Control Move
+  description: Move the vacuum in a direction using remote control.
+  fields:
+    velocity:
+      name: Velocity
+      description: Movement speed (-300 to 300). Positive = forward, negative = backward.
+      required: true
+      example: 200
+      selector:
+        number:
+          min: -300
+          max: 300
+          step: 50
+          mode: slider
+    rotation:
+      name: Rotation
+      description: Rotation angle (-120 to 120). Positive = left, negative = right.
+      required: true
+      example: 0
+      selector:
+        number:
+          min: -120
+          max: 120
+          step: 10
+          mode: slider
+
+remote_control_stop:
+  name: Remote Control Stop
+  description: Stop the current remote control movement.
+
+remote_control_exit:
+  name: Remote Control Exit
+  description: Exit remote control mode entirely.
+
+set_dnd:
+  name: Set Do Not Disturb
+  description: Enable or disable Do Not Disturb mode, optionally setting quiet hours.
+  fields:
+    enabled:
+      name: Enabled
+      description: Enable or disable DND mode.
+      required: true
+      example: true
+      selector:
+        boolean:
+    start_time:
+      name: Start Time
+      description: Start time for DND (e.g. "22:00").
+      required: false
+      example: "22:00"
+      selector:
+        time:
+    stop_time:
+      name: Stop Time
+      description: Stop time for DND (e.g. "07:00").
+      required: false
+      example: "07:00"
+      selector:
+        time:
+
+play_sound:
+  name: Play Sound
+  description: Play a sound/voice prompt on the vacuum.
+
+set_voice:
+  name: Set Voice Pack
+  description: Download and apply the configured voice pack.
