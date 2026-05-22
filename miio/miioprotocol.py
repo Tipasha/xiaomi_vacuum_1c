@@ -35,38 +35,45 @@ class MiIOProtocol:
         self.debug = debug
         self.lazy_discover = lazy_discover
 
-        self._timeout = 5
+        self._timeout = 3
         self._discovered = False
         self._device_ts = None
         self.__id = start_id
         self._device_id = None
 
-    def send_handshake(self) -> Message:
+    def send_handshake(self, retries: int = 3) -> Message:
         """Send a handshake to discover the device."""
-        m = MiIOProtocol.discover(self.ip)
-        if m is not None:
-            header = m.header.value
-            self._device_id = header.device_id
-            self._device_ts = header.ts
-            self._discovered = True
-            if self.debug > 1:
-                _LOGGER.debug(m)
-            _LOGGER.debug(
-                "Discovered %s with ts: %s, token: %s",
-                self._device_id.hex(),
-                self._device_ts,
-                codecs.encode(m.checksum, "hex"),
-            )
-        else:
-            _LOGGER.error("Unable to discover the device %s", self.ip)
-            raise DeviceException("Unable to discover the device")
+        for attempt in range(retries):
+            try:
+                m = MiIOProtocol.discover(self.ip, timeout=self._timeout)
+                if m is not None:
+                    header = m.header.value
+                    self._device_id = header.device_id
+                    self._device_ts = header.ts
+                    self._discovered = True
+                    if self.debug > 1:
+                        _LOGGER.debug(m)
+                    _LOGGER.debug(
+                        "Discovered %s with ts: %s, token: %s",
+                        self._device_id.hex(),
+                        self._device_ts,
+                        codecs.encode(m.checksum, "hex"),
+                    )
+                    return m
+            except DeviceException:
+                if attempt < retries - 1:
+                    _LOGGER.debug(
+                        "Handshake attempt %d/%d failed for %s, retrying",
+                        attempt + 1, retries, self.ip,
+                    )
+                    continue
 
-        return m
+        _LOGGER.error("Unable to discover the device %s", self.ip)
+        raise DeviceException("Unable to discover the device")
 
     @staticmethod
-    def discover(addr: str = None) -> Any:
+    def discover(addr: str = None, timeout: int = 10) -> Any:
         """Scan for devices in the network or discover a specific device."""
-        timeout = 5
         is_broadcast = addr is None
         seen_addrs = []
         if is_broadcast:

@@ -35,8 +35,8 @@ class Device:
             try:
                 properties_to_request = _props[:max_properties]
                 values.extend(self.send("get_properties", properties_to_request))
-            except DeviceException:
-                _LOGGER.error("Unable to request properties %s", properties_to_request)
+            except DeviceException as ex:
+                _LOGGER.error("Unable to request properties %s: %s", properties_to_request, ex)
             if max_properties is None:
                 break
             _props[:] = _props[max_properties:]

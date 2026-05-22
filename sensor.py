@@ -21,6 +21,14 @@ _LOGGER = logging.getLogger(__name__)
 
 SENSOR_DESCRIPTIONS: tuple[SensorEntityDescription, ...] = (
     SensorEntityDescription(
+        key="battery",
+        translation_key="battery",
+        name="Battery",
+        native_unit_of_measurement=PERCENTAGE,
+        device_class=SensorDeviceClass.BATTERY,
+        icon="mdi:battery",
+    ),
+    SensorEntityDescription(
         key="main_brush_life_level",
         translation_key="main_brush_life_level",
         name="Main Brush Life",

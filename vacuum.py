@@ -1,8 +1,11 @@
 """Vacuum platform for Xiaomi Mi Robot Vacuum-Mop 1C."""
 from __future__ import annotations
 
+from datetime import timedelta
 from functools import partial
 import logging
+
+SCAN_INTERVAL = timedelta(seconds=30)
 
 from homeassistant.components.vacuum import (
     StateVacuumEntity,
@@ -37,7 +40,6 @@ class DreameVacuumEntity(StateVacuumEntity):
     _attr_name = None
     _attr_supported_features = (
         VacuumEntityFeature.STATE
-        | VacuumEntityFeature.BATTERY
         | VacuumEntityFeature.LOCATE
         | VacuumEntityFeature.RETURN_HOME
         | VacuumEntityFeature.START
@@ -171,12 +173,12 @@ class DreameVacuumEntity(StateVacuumEntity):
             6: VacuumActivity.DOCKED,
         }
         self._attr_activity = state_map.get(int(state.status)) if state.status is not None else None
-        self._attr_battery_level = state.battery
         self._attr_fan_speed = SPEED_CODE_TO_NAME.get(state.fan_speed, "Unknown")
         self._water_level_name = WATER_CODE_TO_NAME.get(state.water_level, "Unknown")
 
         # Store raw state data for sensor entities
         self.hass.data[DOMAIN].setdefault(f"{self._entry.entry_id}_state", {}).update({
+            "battery": state.battery,
             "status": ERROR_CODE_TO_ERROR.get(state.error, "Unknown"),
             "main_brush_time_left": state.brush_left_time,
             "main_brush_life_level": state.brush_life_level,
