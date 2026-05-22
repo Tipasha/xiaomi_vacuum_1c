@@ -53,7 +53,7 @@ class MiIOProtocol:
                 _LOGGER.debug(m)
             _LOGGER.debug(
                 "Discovered %s with ts: %s, token: %s",
-                binascii_hexlify(self._device_id),
+                self._device_id.hex(),
                 self._device_ts,
                 codecs.encode(m.checksum, "hex"),
             )
