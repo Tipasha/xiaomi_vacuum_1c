@@ -163,6 +163,12 @@ class DreameVacuumEntity(StateVacuumEntity):
 
         self._attr_available = True
 
+        # If critical fields are None, the device didn't respond properly
+        if state.status is None:
+            _LOGGER.warning("Device returned no status data, marking unavailable")
+            self._attr_available = False
+            return
+
         # Map state code to VacuumActivity
         state_map = {
             1: VacuumActivity.CLEANING,
@@ -172,7 +178,7 @@ class DreameVacuumEntity(StateVacuumEntity):
             5: VacuumActivity.RETURNING,
             6: VacuumActivity.DOCKED,
         }
-        self._attr_activity = state_map.get(int(state.status)) if state.status is not None else None
+        self._attr_activity = state_map.get(int(state.status))
         self._attr_fan_speed = SPEED_CODE_TO_NAME.get(state.fan_speed, "Unknown")
         self._water_level_name = WATER_CODE_TO_NAME.get(state.water_level, "Unknown")
 

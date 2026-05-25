@@ -31,14 +31,19 @@ class Device:
         """Request properties in slices based on given max_properties."""
         _props = properties.copy()
         values = []
+        last_ex = None
         while _props:
             try:
                 properties_to_request = _props[:max_properties]
                 values.extend(self.send("get_properties", properties_to_request))
             except DeviceException as ex:
                 _LOGGER.error("Unable to request properties %s: %s", properties_to_request, ex)
+                last_ex = ex
             if max_properties is None:
                 break
             _props[:] = _props[max_properties:]
+
+        if not values and last_ex is not None:
+            raise DeviceException("Failed to retrieve any properties from device") from last_ex
 
         return values
