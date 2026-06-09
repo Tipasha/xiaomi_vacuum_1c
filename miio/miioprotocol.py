@@ -190,6 +190,8 @@ class MiIOProtocol:
             raise DeviceException("Got checksum error") from ex
         except socket.timeout:
             _LOGGER.debug("Timeout waiting for response from %s", self.ip)
+            # Force re-discovery on next attempt to refresh device timestamp
+            self._discovered = False
             if retry_count > 0:
                 return self.send(command, parameters, retry_count - 1)
             raise DeviceException("No response from device")
